@@ -32,7 +32,6 @@ echo "Volume: $volume"
 
 # Update models
 # https://github.com/ollama/ollama/issues/2633#issuecomment-1957315877
-# ollama list | awk 'NR>1 {print $1}' | xargs -I {} sh -c 'echo "Updating model: {}"; ollama pull {}; echo "--"' && echo "All models updated."
 cmd_update_models="ollama list | awk 'NR>1 {print \$1}' | xargs -I {} sh -c 'echo \"Updating model: {}\"; ollama pull {}; echo \"--\"' && echo \"All models updated.\""
 
 # Build containers list, "ollama-gpu1" "ollama-gpu2" "ollama-cpu1" "ollama-cpu2"
