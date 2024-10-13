@@ -1,19 +1,25 @@
 #!/bin/bash
+# Version 0.1.1
 
 # Containers to build
 image="ollama/ollama"
-port="11434"
 
 # There could be other arguments passed to the script, so we need to check all arguments
 for arg in "$@"; do
     case $arg in
-    # Check argument -p= or --path=, use $path:/root/.ollama, else $path = ollama
-    -p=* | --path=*)
+    # --path=, use $path:/root/.ollama, else $path = ollama
+    --path=*)
         path="${arg#*=}"
         shift
         ;;
 
-    -u | --update-models)
+    # ports
+    --port=*)
+        port="${arg#*=}"
+        shift
+        ;;
+
+    --update-models)
         update_models="true"
         shift
         ;;
@@ -24,6 +30,11 @@ done
 # If path is not set, use ollama
 if [ -z "$path" ]; then
     path="ollama"
+fi
+
+# Set port
+if [ -z "$port" ]; then
+    port="11434"
 fi
 
 # Volume = $path:/root/.ollama
@@ -42,11 +53,11 @@ if nvidia-smi &>/dev/null; then
     gpu_name=$(nvidia-smi --query-gpu=name --format=csv,noheader,nounits)
     echo "GPU Name: $gpu_name"
 
-    if [ $gpu_memory -gt 24000 ]; then
-        echo "GPU Memory over 24GB"
+    if [ $gpu_memory -gt 32000 ]; then
+        echo "GPU Memory over 32GB"
         containers="ollama-gpu1 ollama-gpu2"
     else
-        echo "GPU Memory under 24GB"
+        echo "GPU Memory under 32GB"
         containers="ollama-gpu1"
     fi
 else
